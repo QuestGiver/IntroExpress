@@ -4,18 +4,27 @@ const router = express.Router()//a router works the same as an app, with similar
 
 router
 .get("/", (req, res) =>{
+    console.log(req.query.name)//we can query information without using an index
     res.send("User List")
 })
 
-router
-.post('/',(req,res) =>{//a post request for creating a new user
-    res.send('create user')
-   })
-
-router
-.get("/new",(req,res) =>{
-    res.send("User New Form")
+router.get("/new",(req,res) =>{
+    res.render("users/new", {firstName: "Enter Name"}) 
 })
+
+router.post("/",(req,res) => {
+    const isValid = true//false//we can test our inputs from the user with a bool so we dont have to fully flesh out all functionality to test
+    if (isValid){
+        users.push({firstName: req.body.firstName})//this will push a new element into our array of users
+        res.redirect(`/users/${users.length - 1}`)
+    }else{
+        console.log("Error")
+        res.render('users/new',{firstName: req.body.firstName})//if that 2nd parameter wasn't there, upon pressing submit: the user would see the input field wiped
+        //that makes for a bad user experience because they can't see what waas wrong
+    }
+    console.log(req.body.firstName)
+})
+
 
 router
 .route("/:id")//get, put, send, delte, etc. are all responces sent to the user.
@@ -23,7 +32,7 @@ router
     console.log(req.user)
     res.send(`User Get User with ID ${req.params.id}`)// in order to pass in code in a message you need to use "`" to denote your sending the return of something.
     //"${}" is the syntax for passing in code inside a message
-    // we can create a dynamic parameter in a url can be done with ":". "id" is the varible that stands in for the code which determines the url and can be accessed with "." automatically
+    // we can create a dynamic parameter in a url which can be done with ":". "id" is the varible that stands in for the code which determines the url and can be accessed with "." automatically
     //Always place routes with static id's above dynamic ones, otherwise you can end up with a routing error. Express read code from top to bottom and anything after
     // ":" counts as a valid string ID. SO "http://localhost:3000/users/new" would trigger this routes send request and also a route with a static route of "/new" below it.
 
